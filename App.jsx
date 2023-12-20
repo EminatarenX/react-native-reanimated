@@ -2,7 +2,15 @@ import React, {useEffect} from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {View, ScrollView, Text, Switch, Dimensions} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Text,
+  Switch,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Animated, {
   useSharedValue,
@@ -14,12 +22,14 @@ import Animated, {
   interpolateColor,
   useDerivedValue,
   withTiming,
+  useAnimatedProps,
 } from 'react-native-reanimated';
 import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import SwipeDelete from './src/components/SwipeDelete/SwipeDelete';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,10 +76,29 @@ export default function App() {
             ),
           }}
         />
+        <Tab.Screen
+          name="circleBar"
+          component={CirclePage}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="circle" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen 
+          name="SwipeDelete"
+          component={SwipeDelete}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="delete" color={color} size={size} />
+            ),
+          }}
+          />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
+
 
 const Colors = {
   dark: {
@@ -106,7 +135,7 @@ const stylestext = {
   fontWeight: '800',
   letterSpacing: 14,
   marginBottom: 34,
-}
+};
 
 function DarkMode() {
   const [theme, setTheme] = React.useState('dark');
@@ -151,7 +180,7 @@ function DarkMode() {
     <Animated.View
       className="flex-1 items-center justify-center"
       style={[rStyle]}>
-        <Animated.Text style={[stylestext, rTextStyle]}>Theme</Animated.Text>
+      <Animated.Text style={[stylestext, rTextStyle]}>Theme</Animated.Text>
       <Animated.View
         className="items-center justify-center bg-white"
         style={[rCircleStyle, stylesCircle]}>
@@ -168,7 +197,7 @@ function DarkMode() {
   );
 }
 
-const WORDS = ["Saken 🥶", 'el 🤯', 'fortnite 😳', 'papus 🥵'];
+const WORDS = ['Saken 🥶', 'el 🤯', 'fortnite 😳', 'papus 🥵'];
 
 import Page from './src/components/Page';
 
@@ -283,3 +312,84 @@ function Settings() {
     </GestureHandlerRootView>
   );
 }
+
+const BACKGROUD_COLOR_CIRCLE = '#444B6F';
+const BACKGROUND_STROKE_COLOR = '#303858';
+const STROKE_COLOR = '#A6E1FA';
+const CIRCLE_LENGTH = 1000; // 2PI* RADIUS
+const R = CIRCLE_LENGTH / (2 * Math.PI);
+
+const {width, height} = Dimensions.get('window');
+
+import {Svg, Circle} from 'react-native-svg';
+import { ReText } from 'react-native-redash';
+function CirclePage() {
+  const progress = useSharedValue(0)
+  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+  const animatedProps = useAnimatedProps(() => {
+    return {
+      strokeDashoffset: CIRCLE_LENGTH * (1- progress.value)
+    }
+  })
+
+
+  const progressText = useDerivedValue(() => {
+    return `${Math.floor(progress.value * 100)}`
+  })
+
+  const onPress = () => {
+    progress.value = withTiming(progress.value > 0 ? 0: 1, {duration: 2000})
+  }
+  return (
+    <View style={circleSection.container}>
+
+      <ReText style={{fontSize: 80, color: 'rgba(256, 256, 256, 0.7)', width:200, textAlign: 'center'}} text={progressText} />
+      <Svg style={{position: 'absolute'}}>
+        <Circle
+          cx={width / 2}
+          cy={height / 2}
+          r={R}
+          fill={'none'}
+          stroke={BACKGROUND_STROKE_COLOR}
+          strokeWidth={30}
+        />
+
+        <AnimatedCircle
+          cx={width / 2}
+          cy={height / 2}
+          r={R}
+          fill={'none'}
+          stroke={STROKE_COLOR}
+          strokeWidth={15}
+          strokeDasharray={CIRCLE_LENGTH}
+          animatedProps={animatedProps}
+          strokeLinecap={'round'}
+        />
+      </Svg>
+      <TouchableOpacity style={circleSection.touchableStyle} onPress={onPress}>
+        <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}>Press me</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const circleSection = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: BACKGROUD_COLOR_CIRCLE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+    
+  },
+  touchableStyle: {
+    position: 'absolute',
+    bottom: 50,
+    width: width * 0.7,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 25, 
+    backgroundColor: BACKGROUND_STROKE_COLOR
+  }
+});
