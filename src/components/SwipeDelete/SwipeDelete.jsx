@@ -24,7 +24,6 @@ export default function SwipeDelete() {
   const onDelete = (id) => {
     const nuevoArray = tasks.filter((task) => task.id !== id)
     setTask(nuevoArray)
-    console.log(nuevoArray)
   }
   return (
     <View style={styles.container}>

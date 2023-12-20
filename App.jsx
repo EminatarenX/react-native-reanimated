@@ -30,6 +30,7 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import SwipeDelete from './src/components/SwipeDelete/SwipeDelete';
+import AddItems from './src/components/AddAndDeleteTransition/AddItems';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,22 +51,13 @@ export default function App() {
           }}
         />
         <Tab.Screen
-          name="Initial"
-          component={Home}
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="home" color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
           name="Animated"
           component={AnimatedPageTransition}
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="animation" color={color} size={size} />
-            ),
-          }}
+              ),
+            }}
         />
         <Tab.Screen
           name="DarkMode"
@@ -73,9 +65,18 @@ export default function App() {
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="dark-mode" color={color} size={size} />
-            ),
-          }}
+              ),
+            }}
         />
+            <Tab.Screen
+              name="Initial"
+              component={Home}
+              options={{
+                tabBarIcon: ({color, size}) => (
+                  <MaterialIcons name="home" color={color} size={size} />
+                ),
+              }}
+            />
         <Tab.Screen
           name="circleBar"
           component={CirclePage}
@@ -94,10 +95,21 @@ export default function App() {
             ),
           }}
           />
+        <Tab.Screen
+          name="AddItems"
+          component={AddItems}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialIcons name="add" color={color} size={size} />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
+
+// Dark Mode
 
 
 const Colors = {
@@ -136,6 +148,9 @@ const stylestext = {
   letterSpacing: 14,
   marginBottom: 34,
 };
+
+// Dark Mode
+
 
 function DarkMode() {
   const [theme, setTheme] = React.useState('dark');
@@ -197,6 +212,10 @@ function DarkMode() {
   );
 }
 
+// DarkMode End
+
+// Animated Page Transition
+
 const WORDS = ['Saken 🥶', 'el 🤯', 'fortnite 😳', 'papus 🥵'];
 
 import Page from './src/components/Page';
@@ -226,12 +245,18 @@ function AnimatedPageTransition() {
   );
 }
 
+// End of Animated Page Transition
+
 const handle = progress => {
   'worklet';
   return `${progress.value * 2 * Math.PI}rad`;
 };
 
+
+// Home circlue transition transform
+
 const size = 100.0;
+
 function Home() {
   const progress = useSharedValue(0);
   const scale = useSharedValue(2);
@@ -259,6 +284,11 @@ function Home() {
     </View>
   );
 }
+
+// End of Home circle transition transform
+
+// Drag and Drop Gesture Handler
+
 const circleRadius = 200;
 function Settings() {
   const translateX = useSharedValue(0);
@@ -312,6 +342,10 @@ function Settings() {
     </GestureHandlerRootView>
   );
 }
+
+// End of Drag and Drop Gesture Handler
+
+// Circle bar animation 
 
 const BACKGROUD_COLOR_CIRCLE = '#444B6F';
 const BACKGROUND_STROKE_COLOR = '#303858';
@@ -393,3 +427,6 @@ const circleSection = StyleSheet.create({
     backgroundColor: BACKGROUND_STROKE_COLOR
   }
 });
+
+
+// End of Circle bar animation
